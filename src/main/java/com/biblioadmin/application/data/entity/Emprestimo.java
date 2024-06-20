@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "loans")
+@Table(name = "emprestimo")
 public class Emprestimo extends AbstractEntity {
     @Column(name = "data_emprestimo")
     private LocalDate dataEmprestimo;
@@ -36,15 +36,11 @@ public class Emprestimo extends AbstractEntity {
         return dataEntrega;
     }
 
-    public void setDataEntrega(LocalDate dataEntrega) {
-        this.dataEntrega = dataEntrega;
-    }
+    public void setDataEntrega(LocalDate dataEntrega) { this.dataEntrega = dataEntrega; }
 
-    public Boolean getDevolucao() {
-        return devolucao;
-    }
+    public Boolean getDevolucao() { return devolucao; }
 
-    public void setReturnDate(Boolean devolucao) {
+    public void setDevolucao(Boolean devolucao) {
         this.devolucao = devolucao;
     }
 

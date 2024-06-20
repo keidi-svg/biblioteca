@@ -1,16 +1,11 @@
 package com.biblioadmin.application.views.livros;
 
-import com.biblioadmin.application.data.entity.Estudante;
 import com.biblioadmin.application.data.entity.Livro;
-import com.biblioadmin.application.data.entity.User;
-import com.biblioadmin.application.data.service.EstudantesService;
 import com.biblioadmin.application.data.service.LivrosService;
-import com.biblioadmin.application.data.service.UserService;
 import com.biblioadmin.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
@@ -22,6 +17,7 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToIntegerConverter;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.PageTitle;
@@ -30,7 +26,6 @@ import com.vaadin.flow.router.RouteAlias;
 
 import javax.annotation.security.PermitAll;
 import java.io.Serial;
-import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 @PageTitle("Comentarios")
@@ -39,7 +34,7 @@ import java.util.function.Consumer;
 @PermitAll
 @Uses(Icon.class)
 public class LivrosView extends VerticalLayout {
-        public LivrosView(LivrosService service, EstudantesService estudantesService, UserService userService) {
+        public LivrosView(LivrosService service) {
 
             Grid<Livro> grid = new Grid<>();
             final GridListDataView<Livro> gridListDataView = grid.setItems(service.listarTodos());
@@ -52,7 +47,7 @@ public class LivrosView extends VerticalLayout {
             grid.addComponentColumn(item -> {
                 Button editButton = new Button("Editar");
                 editButton.addClickListener(event -> {
-                    new LivrosView.LivrosFormDialog(item, userService, estudantesService, service, c -> {
+                    new LivrosView.LivrosFormDialog(item, service, c -> {
                         gridListDataView.addItem(c);
                         gridListDataView.refreshAll();
                     });
@@ -75,7 +70,7 @@ public class LivrosView extends VerticalLayout {
             Button btnAdicionar = new Button("Adicionar");
             btnAdicionar.addClickListener(event -> {
                 // Cria uma instância do formulário
-                new LivrosView.LivrosFormDialog(new Livro(),userService , estudantesService, service, c -> {
+                new LivrosView.LivrosFormDialog(new Livro(), service, c -> {
                     gridListDataView.addItem(c);
                     gridListDataView.refreshAll();
                 });
@@ -87,60 +82,59 @@ public class LivrosView extends VerticalLayout {
             @Serial
             private static final long serialVersionUID = 6055099001923416653L;
 
-            public LivrosFormDialog(final Livro livros, UserService userService, EstudantesService estudantesService, final LivrosService livrosService, final Consumer<Livro> consumer) {
+            public LivrosFormDialog(final Livro livro, final LivrosService livrosService, final Consumer<Livro> consumer) {
                 FormLayout formLayout = new FormLayout();
 
                 Binder<Livro> binder = new Binder<>(Livro.class);
                 // Cria os campos de texto do formulário
-                TextField txtNome = new TextField("Livros");
+                TextField txtTitulo = new TextField("Titulo");
 
-                //final ComboBox<Estudante> cbEquipamentos = new ComboBox<>("Equipamentos");
-                //cbEquipamentos.setItems(estudantesService.listarTodos());
-                //cbEquipamentos.setItemLabelGenerator(Estudante::getNome);
-//
-                //binder.forField(cbEquipamentos).asRequired()
-                //        .bind(Livro::getEquipamento, Livro::setEquipamento);
+                binder.forField(txtTitulo).asRequired()
+                        .withValidator(new StringLengthValidator("O título do livro deve estar entre 3 e 255 caracteres", 3, 255))
+                        .bind(Livro::getTitulo, Livro::setTitulo);
 
-                //final ComboBox<User> cbUser = new ComboBox<>("Usuários");
-                //cbUser.setItems(userService.listarTodos());
-                //cbUser.setItemLabelGenerator(User::getNome);
-//
-                //binder.forField(cbUser).asRequired()
-                //        .bind(Livro::getUsuario, Livro::setUsuario);
-//
-                //binder.forField(txtNome).asRequired()
-                //        .withValidator(new StringLengthValidator("O comentário deve ter entre 3 e 250 caracteres", 3, 50))
-                //        .bind(Livro::getComentario, Livro::setComentario);
-//
-                //binder.setBean(comentarios);
-//
-                //// Abre o diálogo de edição do equipamentos
-                //formLayout.add(txtNome, cbEquipamentos, cbUser);
-                //add(formLayout);
+                TextField txtAutor = new TextField("Autor");
 
-                // Configura o diálogo para salvar o objeto Cliente quando o botão 'Salvar' for clicado
-                //Button btnSalvar = new Button("Salvar", evento -> {
-                //    if (comentarios.getId() == null) {
-                //        comentarios.setDataComentario(LocalDateTime.now());
-                //    }
-                //    if (binder.writeBeanIfValid(comentarios)) {
-                //        consumer.accept(comentarios);
-                //        comentariosService.salvar(comentarios);
-                //        close();
-                //    } else {
-                //        Notification.show("Preencha todos os campos corretamente.");
-                //    }
-                //});
+                binder.forField(txtAutor).asRequired()
+                        .withValidator(new StringLengthValidator("O título do livro deve estar entre 3 e 255 caracteres", 3, 255))
+                        .bind(Livro::getAutor, Livro::setAutor);
+
+                TextField txtEditora = new TextField("Editora");
+
+                binder.forField(txtEditora).asRequired()
+                        .withValidator(new StringLengthValidator("O título do livro deve estar entre 3 e 255 caracteres", 3, 255))
+                        .bind(Livro::getEditora, Livro::setEditora);
+
+                TextField txtAno = new TextField("Ano");
+
+                binder.forField(txtAno).asRequired()
+                        .withValidator(new StringLengthValidator("O ano deve ter 4 digitos", 4, 4))
+                        .withConverter(new StringToIntegerConverter("Escreva um ano"))
+                        .bind(Livro::getAno, Livro::setAno);
+
+
+                binder.setBean(livro);
+
+                formLayout.add(txtTitulo, txtAutor, txtEditora, txtAno);
+                add(formLayout);
+
+                Button btnSalvar = new Button("Salvar", evento -> {
+                    if (binder.writeBeanIfValid(livro)) {
+                        consumer.accept(livro);
+                        livrosService.salvar(livro);
+                        close();
+                    } else {
+                        Notification.show("Preencha todos os campos corretamente.");
+                    }
+                });
 
                 Button cancelButton = new Button("Cancelar", e -> close());
 
-                //getFooter().add(btnSalvar);
+                getFooter().add(btnSalvar);
                 getFooter().add(cancelButton);
 
-                // Abre o diálogo
                 open();
             }
 
         }
-
 }

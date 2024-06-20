@@ -1,24 +1,22 @@
 package com.biblioadmin.application.data.entity;
 
-import com.biblioadmin.application.data.entity.AbstractEntity;
-
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Table(name = "estudantes")
+@Table(name = "estudante")
 public class Estudante extends AbstractEntity {
     @Column(name = "nome")
     private String nome;
 
-    @Column(name = "birth_date")
-    private LocalDate birthDate;
+    @Column(name = "nascimento")
+    private LocalDate nascimento;
 
     @Column(name = "email")
     private String email;
 
-    @Column(name = "phone")
-    private String phone;
+    @Column(name = "telefone")
+    private String telefone;
 
     @Column(name = "matricula")
     private Long matricula;
@@ -32,12 +30,12 @@ public class Estudante extends AbstractEntity {
         this.nome = nome;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
+    public LocalDate getNascimento() {
+        return nascimento;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
+    public void setNascimento(LocalDate nascimento) {
+        this.nascimento = nascimento;
     }
 
     public String getEmail() {
@@ -48,12 +46,12 @@ public class Estudante extends AbstractEntity {
         this.email = email;
     }
 
-    public String getPhone() {
-        return phone;
+    public String getTelefone() {
+        return telefone;
     }
 
-    public void setPhone(String phone) {
-        this.phone = phone;
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
     }
 
     public Long getMatricula() {

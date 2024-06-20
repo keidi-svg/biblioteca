@@ -7,12 +7,12 @@ import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.checkbox.Checkbox;
+import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.dialog.Dialog;
 import com.vaadin.flow.component.formlayout.FormLayout;
 import com.vaadin.flow.component.grid.Grid;
 import com.vaadin.flow.component.grid.dataview.GridListDataView;
-import com.vaadin.flow.component.html.Image;
 import com.vaadin.flow.component.icon.Icon;
 import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
@@ -20,16 +20,12 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
-import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import com.vaadin.flow.router.RouteAlias;
-import com.vaadin.flow.server.StreamResource;
-import org.springframework.util.unit.DataSize;
 
 import javax.annotation.security.PermitAll;
 import java.io.*;
-import java.time.LocalDateTime;
 import java.util.function.Consumer;
 
 @PageTitle("Estudantes")
@@ -44,9 +40,10 @@ public class EstudanteView extends VerticalLayout {
         final GridListDataView<Estudante> gridListDataView = grid.setItems(service.listarTodos());
         grid.addColumn(Estudante::getId).setHeader("ID").setWidth("60px");
         grid.addColumn(Estudante::getNome).setHeader("Nome").setWidth("20%");
-        //grid.addColumn(Estudante::getDescricao).setHeader("Descrição").setWidth("40%");
-        //grid.addColumn(Estudante::getData).setHeader("Data").setWidth("20%");
-        //grid.addColumn(equipamentos -> equipamentos.getAtivo() ? "Ativo" : "Inativo").setHeader("Ativo").setComparator(Estudante::getAtivo).setWidth("10%");
+        grid.addColumn(Estudante::getMatricula).setHeader("Matrícula").setWidth("40%");
+        grid.addColumn(Estudante::getEmail).setHeader("Email").setWidth("20%");
+        grid.addColumn(Estudante::getTelefone).setHeader("Telefone").setWidth("20%");
+        grid.addColumn(Estudante::getNascimento).setHeader("Nascimento").setWidth("20%");
 
         grid.addComponentColumn(item -> {
             Button editButton = new Button("Editar");
@@ -95,8 +92,11 @@ public class EstudanteView extends VerticalLayout {
 
             TextField txtDescricao = new TextField("Descrição");
 
-            var cbAtivo = new Checkbox("Ativo");
-
+            final DatePicker datePickerNascimento = new DatePicker("Data de Nascimento");
+            add(datePickerNascimento);
+//
+            binder.forField(datePickerNascimento).asRequired()
+                    .bind(Estudante::getNascimento, Estudante::setNascimento);
             //binder.forField(cbAtivo)
             //        .bind(Estudante::getAtivo, Estudante::setAtivo);
 //
@@ -114,9 +114,6 @@ public class EstudanteView extends VerticalLayout {
             add(formLayout);
 
             Button btnSalvar = new Button("Salvar", evento -> {
-                if (estudante.getId() == null) {
-               //     estudante.setDataComentario(LocalDateTime.now());
-                }
                 if (binder.writeBeanIfValid(estudante)) {
                     consumer.accept(estudante);
                     estudanteService.salvar(estudante);

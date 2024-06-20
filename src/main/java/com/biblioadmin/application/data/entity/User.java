@@ -3,13 +3,7 @@ package com.biblioadmin.application.data.entity;
 import com.biblioadmin.application.data.Role;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Set;
-import javax.persistence.Column;
-import javax.persistence.ElementCollection;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "application_user")
@@ -23,6 +17,10 @@ public class User extends AbstractEntity {
     @Enumerated(EnumType.STRING)
     @ElementCollection(fetch = FetchType.EAGER)
     private Set<Role> roles;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "estudante_id")
+    private Estudante estudante;
 
     public String getUsername() {
         return username;
@@ -48,4 +46,6 @@ public class User extends AbstractEntity {
     public void setRoles(Set<Role> roles) {
         this.roles = roles;
     }
+    public Estudante getEstudante() { return estudante; }
+    public void setEstudante(Estudante estudante) { this.estudante = estudante; }
 }

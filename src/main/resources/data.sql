@@ -4,19 +4,19 @@ insert into sample_person(id,first_name,last_name,occupation,role) values (3,'Eu
 insert into sample_person(id,first_name,last_name,occupation,role) values (4,'Alejandro','Miles','Scale Attendant','Worker')
 insert into sample_person(id,first_name,last_name,occupation,role) values (5,'Cora','Tesi','Clinical Audiologist','Supervisor')
 
-insert into application_user (id, username,name,hashed_password) values ('1','user','John Normal','$2a$10$xdbKoM48VySZqVSU/cSlVeJn0Z04XCZ7KZBjUBC00eKo5uLswyOpe')
-insert into user_roles (user_id, roles) values ('1', 'COMUM')
-insert into application_user (id, username, name, hashed_password) values ('2','admin','Emma Powerful','$2a$10$jpLNVNeA7Ar/ZQ2DKbKCm.MuT2ESe.Qop96jipKMq7RaUgCoQedV.')
-insert into user_roles (user_id, roles) values ('2', 'COMUM')
-insert into user_roles (user_id, roles) values ('2', 'ADMINISTRADOR')
+insert into application_user (id, username,name, hashed_password, estudante_id) values ('1','user','John Normal','$2a$10$xdbKoM48VySZqVSU/cSlVeJn0Z04XCZ7KZBjUBC00eKo5uLswyOpe', 1)
+insert into user_roles (user_id, roles) values ('1', 'ESTUDANTE')
+insert into application_user (id, username, name, hashed_password, estudante_id) values ('2','admin','Emma Powerful','$2a$10$jpLNVNeA7Ar/ZQ2DKbKCm.MuT2ESe.Qop96jipKMq7RaUgCoQedV.', 2)
+insert into user_roles (user_id, roles) values ('2', 'ESTUDANTE')
+insert into user_roles (user_id, roles) values ('2', 'BIBLIOTECARIA')
 
 -- Inserindo os equipamentos
-INSERT INTO equipamentos (id, nome, imagem, descricao, ativo, data_equipamento) VALUES (1,'Torno Mecânico 500mm Modelo BV20L 220V - TTM520 - Tander', 'Torno_Mecanico_500mm.png', 'O Torno Mecânico Tander TTM520 é uma ferramenta utilizada por vários profissionais na confecção e acabamento de inúmeras peças metálicas, tais como: eixos, polias, pinos, roscas, peças cilíndricas internas e externas, cones, esferas, entre outros.', true, '2019-10-01 14:54:20.873')
-INSERT INTO equipamentos (id, nome, imagem, descricao, ativo, data_equipamento) VALUES (2,'Processador Intel Core i9-7920X Skylake, Cache 16.5MB, 2.9GHz (4.3GHz Max Turbo), LGA 2066 - BX80673I97920X', 'Intel_Core_i9.png', 'Com esse processador inovador e incrível você desfruta ao máximo o verdadeiro potencial do seu computador e desfruta da mais pura velocidade. Maximize o seu desempenho seja trabalhando, jogando', true, '2019-10-01 15:00:20.873')
-INSERT INTO equipamentos (id, nome, imagem, descricao, ativo, data_equipamento) VALUES (3,'Monitor, Dell, U2518D, UltraSharp, Preto e Suporte em Alumínio, 25', 'Monitor_Dell.png', 'Dê vida ao seu trabalho com uma tela de 25 polegadas quase sem bordas que conta com detalhes em cores vívidas.', false, '2018-10-01 10:00:20.000')
-INSERT INTO equipamentos (id, nome, imagem, descricao, ativo, data_equipamento) VALUES (4,'Mouse Gamer Razer Deathadder Essential Óptico 5 Botões 4G 6.400 DPI', 'Mouse_Razer.png', 'Nada melhor do que um mouse gamer com tecnologia de ponta para qualificar seus comandos e aprimorar suas jogadas nos games.', true, '2017-10-01 09:00:20.000')
-INSERT INTO equipamentos (id, nome, imagem, descricao, ativo, data_equipamento) VALUES (5,'All-in-One Media Keyboard', 'Teclado_Microsoft.png', 'O All-in-One Media Keyboard é o dispositivo ideal para sua sala ou home office. Com teclado em tamanho natural e trackpad multitoque integrado, é possível digitar, passar o dedo, arrastar, fazer zoom e clicar facilmente.', false, '2017-10-01 13:00:00.000')
+INSERT INTO emprestimo (id, livro_id, estudante_id, devolucao,  data_entrega, data_emprestimo) VALUES (1, 1, 1, true, '2021-08-02',  '2021-08-22')
+INSERT INTO emprestimo (id, livro_id, estudante_id, devolucao,  data_entrega, data_emprestimo) VALUES (2, 2, 2, false, '2023-07-03',  '2023-07-27')
+INSERT INTO emprestimo (id, livro_id, estudante_id, devolucao,  data_entrega, data_emprestimo) VALUES (3, 3,'Daniel Max', true, '2022-09-05',  '2022-10-01')
+INSERT INTO emprestimo (id, livro_id, estudante_id, devolucao,  data_entrega, data_emprestimo) VALUES (4, 4,'Luca Mello', false, '2024-02-04',  '2024-02-30')
+INSERT INTO emprestimo (id, livro_id, estudante_id, devolucao,  data_entrega, data_emprestimo) VALUES (5, 5,'João Paulo', true, '2024-06-15',  '2024-07-01')
 
 --Inserindo os comentários
-INSERT INTO comentarios (id,comentario, id_equipamento, id_perfil_usuario, data_comentario) VALUES (1,'Deverá fazer o download do aplicativo da razer para alterar a cor do mouse.', 4, 2, '2020-09-07 18:00:00.000')
-INSERT INTO comentarios (id,comentario, id_equipamento, id_perfil_usuario, data_comentario) VALUES (2,'Problema de aquecimento no processador após 1 ano de uso', 2, 2, '2020-05-04 07:30:00.000')
+INSERT INTO estudante (id, nome, nascimento, email, telefone, matricula) VALUES (1,'João Vitor Dandolini','2006-06-15', 'joao_vd_carvalho@estudante.sesisenai.org.br', '48997642427', 20241023)
+INSERT INTO estudante (id, nome, nascimento, email, telefone, matricula) VALUES (2,'Keidi Teixeira', '2006-08-11', 'keidi_barbieri@estudante.sesisenai.org.br', '48992942632', 20242036)

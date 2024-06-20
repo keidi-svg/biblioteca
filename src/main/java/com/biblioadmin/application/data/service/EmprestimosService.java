@@ -48,4 +48,13 @@ public class EmprestimosService {
     public int count() {
         return (int) repository.count();
     }
+
+    public void updateDevolucao(Long id, boolean devolucao) {
+        Optional<Emprestimo> optionalEmprestimo = repository.findById(id);
+        if (optionalEmprestimo.isPresent()) {
+            Emprestimo emprestimo = optionalEmprestimo.get();
+            emprestimo.setDevolucao(devolucao);
+            repository.save(emprestimo);
+        }
+    }
 }

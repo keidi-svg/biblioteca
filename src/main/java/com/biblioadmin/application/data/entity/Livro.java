@@ -38,7 +38,7 @@ public class Livro extends AbstractEntity {
         return editora;
     }
 
-    public void setPublisher(String editora) {
+    public void setEditora(String editora) {
         this.editora = editora;
     }
 
