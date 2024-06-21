@@ -3,6 +3,7 @@ package com.biblioadmin.application.views;
 import com.biblioadmin.application.components.appnav.AppNav;
 import com.biblioadmin.application.components.appnav.AppNavItem;
 import com.biblioadmin.application.security.AuthenticatedUser;
+import com.biblioadmin.application.views.emprestimos.EmprestimosView;
 import com.biblioadmin.application.views.livros.LivrosView;
 import com.biblioadmin.application.views.estudantes.EstudanteView;
 import com.biblioadmin.application.data.entity.User;
@@ -55,7 +56,7 @@ public class MainLayout extends AppLayout {
     }
 
     private void addDrawerContent() {
-        H1 appName = new H1("techman");
+        H1 appName = new H1("Biblioteca");
         appName.addClassNames(LumoUtility.FontSize.LARGE, LumoUtility.Margin.NONE);
         Header header = new Header(appName);
 
@@ -68,14 +69,18 @@ public class MainLayout extends AppLayout {
         // AppNav is not yet an official component.
         // For documentation, visit https://github.com/vaadin/vcf-nav#readme
         AppNav nav = new AppNav();
-
         if (accessChecker.hasAccess(EstudanteView.class)) {
-            nav.addItem(new AppNavItem("Equipamentos", EstudanteView.class, "la la-filter"));
+            nav.addItem(new AppNavItem("Estudantes", EstudanteView.class, "la la-user"));
+
+        }
+
+        if (accessChecker.hasAccess(EmprestimosView.class)) {
+            nav.addItem(new AppNavItem("Empréstimo", EmprestimosView.class, "la la-filter"));
 
         }
 
         if (accessChecker.hasAccess(LivrosView.class)) {
-            nav.addItem(new AppNavItem("Comentarios", LivrosView.class, "la la-comment"));
+            nav.addItem(new AppNavItem("Livros", LivrosView.class, "la la-book"));
 
         }
         return nav;

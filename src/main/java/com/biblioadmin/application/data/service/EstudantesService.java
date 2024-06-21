@@ -41,8 +41,8 @@ public class EstudantesService {
     public List<Estudante> listarTodos() {
         return repository.findAll();
     }
-    public void salvar(Estudante cliente) {
-        repository.save(cliente);
+    public Estudante salvar(Estudante estudante) {
+        return repository.save(estudante);
     }
 
     public int count() {

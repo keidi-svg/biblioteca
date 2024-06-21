@@ -3,7 +3,7 @@ package com.biblioadmin.application.data.entity;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "livros")
+@Table(name = "livro")
 public class Livro extends AbstractEntity {
     @Column(name = "titulo")
     private String titulo;

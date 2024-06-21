@@ -1,12 +1,12 @@
 package com.biblioadmin.application.views.estudantes;
 
+import com.biblioadmin.application.data.Role;
 import com.biblioadmin.application.data.entity.Estudante;
 import com.biblioadmin.application.data.service.EstudantesService;
 import com.biblioadmin.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
 import com.vaadin.flow.component.dialog.Dialog;
@@ -19,19 +19,22 @@ import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.textfield.TextField;
 import com.vaadin.flow.data.binder.Binder;
+import com.vaadin.flow.data.converter.StringToLongConverter;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
+import com.vaadin.flow.data.validator.StringLengthValidator;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 
-import javax.annotation.security.PermitAll;
+import javax.annotation.security.RolesAllowed;
 import java.io.*;
 import java.util.function.Consumer;
 
+import static com.biblioadmin.application.data.Role.BIBLIOTECARIA;
+
 @PageTitle("Estudantes")
 @Route(value = "estudantes", layout = MainLayout.class)
-@RouteAlias(value = "none", layout = MainLayout.class)
-@PermitAll
+//@RouteAlias(value = "none", layout = MainLayout.class)
+@RolesAllowed()
 @Uses(Icon.class)
 public class EstudanteView extends VerticalLayout {
     public EstudanteView(EstudantesService service) {
@@ -90,8 +93,6 @@ public class EstudanteView extends VerticalLayout {
 
             TextField txtNome = new TextField("Nome");
 
-            TextField txtDescricao = new TextField("Descrição");
-
             final DatePicker datePickerNascimento = new DatePicker("Data de Nascimento");
             add(datePickerNascimento);
 //
@@ -100,17 +101,31 @@ public class EstudanteView extends VerticalLayout {
             //binder.forField(cbAtivo)
             //        .bind(Estudante::getAtivo, Estudante::setAtivo);
 //
-            //binder.forField(txtNome).asRequired()
-            //        .withValidator(new StringLengthValidator("O nome deve ter entre 3 e 250 caracteres", 3, 250))
-            //        .bind(Estudante::getNome, Estudante::setNome);
+            TextField txtEmail = new TextField("Email");
+            binder.forField(txtEmail).asRequired()
+                    .withValidator(new StringLengthValidator("O email deve ter entre 3 e 250 caracteres", 3, 250))
+                    .bind(Estudante::getEmail, Estudante::setEmail);
+
+
+            binder.forField(txtNome).asRequired()
+                    .withValidator(new StringLengthValidator("O nome deve ter entre 3 e 250 caracteres", 3, 250))
+                    .bind(Estudante::getNome, Estudante::setNome);
+
+            TextField txtMatricula = new TextField("Matrícula");
+
+            binder.forField(txtMatricula).asRequired()
+                    .withValidator(new StringLengthValidator("O ano deve ter 8 digitos", 8, 8))
+                    .withConverter(new StringToLongConverter("Escreva a matrícula"))
+                    .bind(Estudante::getMatricula, Estudante::setMatricula);
 //
-            //binder.forField(txtDescricao).asRequired()
-            //        .withValidator(new StringLengthValidator("A descrição deve ter entre 3 e 250 caracteres", 3, 250))
-            //        .bind(Estudante::getDescricao, Estudante::setDescricao);
+            TextField txtTelefone = new TextField("Telefone");
+            binder.forField(txtTelefone).asRequired()
+                    .withValidator(new StringLengthValidator("O nome telefone ter entre 11", 11, 11))
+                    .bind(Estudante::getTelefone, Estudante::setTelefone);
 
             binder.setBean(estudante);
 
-            formLayout.add(txtNome, txtDescricao,cbAtivo);
+            formLayout.add(txtNome, txtEmail, datePickerNascimento, txtMatricula, txtTelefone);
             add(formLayout);
 
             Button btnSalvar = new Button("Salvar", evento -> {

@@ -34,7 +34,7 @@ import java.util.function.Consumer;
 
 @PageTitle("Emprestimos")
 @Route(value = "emprestimos", layout = MainLayout.class)
-@RouteAlias(value = "none", layout = MainLayout.class)
+//@RouteAlias(value = "none", layout = MainLayout.class)
 @PermitAll
 @Uses(Icon.class)
 public class EmprestimosView extends VerticalLayout {
