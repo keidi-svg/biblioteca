@@ -2,70 +2,79 @@ package com.biblioadmin.application.data.dao;
 
 import com.biblioadmin.application.data.entity.Livro;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class LivroDAO extends DAO {
 
-    public LivroDAO(final Connection connection) {
+    public LivroDAO(Connection connection) {
         super(connection);
     }
 
-    public List<Livro> findAll() throws SQLException {
-        try (PreparedStatement psmt = getConnection().prepareStatement("SELECT * FROM livro")) {
-            try (ResultSet rs = psmt.executeQuery()) {
-                final List<Livro> pessoas = buildPessoa(rs);
-                return pessoas;
-            }
+    public void create(Livro livro) throws SQLException {
+        String sql = "INSERT INTO livro (titulo, autor, editora, ano) VALUES (?, ?, ?, ?)";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, livro.getTitulo());
+            stmt.setString(2, livro.getAutor());
+            stmt.setString(3, livro.getEditora());
+            stmt.setInt(4, livro.getAno());
+            stmt.executeUpdate();
         }
     }
 
-    public List<Livro> findByAZ() throws SQLException {
-        try (PreparedStatement psmt = getConnection().prepareStatement("SELECT * FROM livro ORDER BY titulo")) {
-            try (ResultSet rs = psmt.executeQuery()) {
-                final List<Livro> pessoas = buildPessoa(rs);
-                return pessoas;
-            }
-        }
-    }
-
-    public Livro findById(Long idLivro) throws SQLException {
-
+    public Livro read(Long id) throws SQLException {
         String sql = "SELECT * FROM livro WHERE id = ?";
-        try {
-            PreparedStatement psmt = this.getConnection().prepareStatement(sql);
-            psmt.setLong(1, idLivro);
-            ResultSet rs = psmt.executeQuery();
-            rs.first();
-            Livro livro = new Livro();
-            livro.setId(rs.getLong("id"));
-            livro.setAno(rs.getInt("ano"));
-            livro.setTitulo(rs.getString("titulo"));
-            livro.setEditora(rs.getString("editora"));
-            livro.setAutor(rs.getString("autor"));
-            return livro;
-
-        } catch (Exception e) {
-            return null;
-
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Livro livro = new Livro();
+                livro.setId(rs.getLong("id"));
+                livro.setTitulo(rs.getString("titulo"));
+                livro.setAutor(rs.getString("autor"));
+                livro.setEditora(rs.getString("editora"));
+                livro.setAno(rs.getInt("ano"));
+                return livro;
+            }
         }
-
+        return null;
     }
 
-    private List<Livro> builLivro(ResultSet rs) throws SQLException {
+    public void update(Livro livro) throws SQLException {
+        String sql = "UPDATE livro SET titulo = ?, autor = ?, editora = ?, ano = ? WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setString(1, livro.getTitulo());
+            stmt.setString(2, livro.getAutor());
+            stmt.setString(3, livro.getEditora());
+            stmt.setInt(4, livro.getAno());
+            stmt.setLong(5, livro.getId());
+            stmt.executeUpdate();
+        }
+    }
 
-        final List<Livro> livros = new ArrayList<>();
-        while (rs.next()) {
-            final Livro livro = new Livro()
-                    .setId(rs.getLong("ID_Pessoa"))
-                    .setCpf(rs.getString("cpf"))
-                    .setNome(rs.getString("nome"));
+    public void delete(Long id) throws SQLException {
+        String sql = "DELETE FROM livro WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
 
-            livros.add(livro);
+    public List<Livro> findAll() throws SQLException {
+        String sql = "SELECT * FROM livro";
+        List<Livro> livros = new ArrayList<>();
+        try (Statement stmt = getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Livro livro = new Livro();
+                livro.setId(rs.getLong("id"));
+                livro.setTitulo(rs.getString("titulo"));
+                livro.setAutor(rs.getString("autor"));
+                livro.setEditora(rs.getString("editora"));
+                livro.setAno(rs.getInt("ano"));
+                livros.add(livro);
+            }
         }
         return livros;
     }
