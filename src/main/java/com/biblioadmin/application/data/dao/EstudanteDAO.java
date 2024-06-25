@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EstudanteDAO extends DAO {
+public class EstudanteDAO extends DAO implements EstudanteDAOInterface {
 
     public EstudanteDAO(Connection connection) {
         super(connection);

@@ -27,20 +27,20 @@ import com.vaadin.flow.router.Route;
 
 import javax.annotation.security.RolesAllowed;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.function.Consumer;
 
-import static com.biblioadmin.application.data.Role.BIBLIOTECARIA;
 
 @PageTitle("Estudantes")
 @Route(value = "estudantes", layout = MainLayout.class)
 //@RouteAlias(value = "none", layout = MainLayout.class)
-@RolesAllowed()
+@RolesAllowed("BIBLIOTECARIA")
 @Uses(Icon.class)
 public class EstudanteView extends VerticalLayout {
-    public EstudanteView(EstudantesService service) {
+    public EstudanteView(EstudantesService service) throws SQLException {
         Grid<Estudante> grid = new Grid<>();
 
-        final GridListDataView<Estudante> gridListDataView = grid.setItems(service.listarTodos());
+        final GridListDataView<Estudante> gridListDataView = grid.setItems(service.getAllEstudantes());
         grid.addColumn(Estudante::getId).setHeader("ID").setWidth("60px");
         grid.addColumn(Estudante::getNome).setHeader("Nome").setWidth("20%");
         grid.addColumn(Estudante::getMatricula).setHeader("Matrícula").setWidth("40%");
@@ -65,7 +65,11 @@ public class EstudanteView extends VerticalLayout {
                             ButtonVariant.LUMO_ERROR,
                             ButtonVariant.LUMO_TERTIARY);
                     button.addClickListener(e -> {
-                        service.delete(comentario.getId());
+                        try {
+                            service.deleteEstudante(comentario.getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         UI.getCurrent().getPage().reload();
                     });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -131,7 +135,7 @@ public class EstudanteView extends VerticalLayout {
             Button btnSalvar = new Button("Salvar", evento -> {
                 if (binder.writeBeanIfValid(estudante)) {
                     consumer.accept(estudante);
-                    estudanteService.salvar(estudante);
+                    estudanteService.updateEstudante(estudante);
                     close();
                 } else {
                     Notification.show("Preencha todos os campos corretamente.");

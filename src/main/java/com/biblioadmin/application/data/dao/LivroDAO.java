@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LivroDAO extends DAO {
+public class LivroDAO extends DAO implements LivroDAOInterface {
 
     public LivroDAO(Connection connection) {
         super(connection);

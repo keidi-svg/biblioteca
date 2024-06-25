@@ -8,7 +8,7 @@ import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
-public class EmprestimoDAO extends DAO {
+public class EmprestimoDAO extends DAO implements EmprestimoDAOInterface {
 
     public EmprestimoDAO(Connection connection) {
         super(connection);

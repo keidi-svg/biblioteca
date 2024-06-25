@@ -19,27 +19,27 @@ public class EmprestimoController {
 
     @PostMapping
     public void create(@RequestBody Emprestimo emprestimo) throws SQLException {
-        emprestimosService.create(emprestimo);
+        emprestimosService.createEmprestimo(emprestimo);
     }
 
     @GetMapping("/{id}")
     public Emprestimo read(@PathVariable Long id) throws SQLException {
-        return emprestimosService.read(id);
+        return emprestimosService.getEmprestimo(id);
     }
 
     @PutMapping("/{id}")
     public void update(@PathVariable Long id, @RequestBody Emprestimo emprestimo) throws SQLException {
         emprestimo.setId(id);
-        emprestimosService.update(emprestimo);
+        emprestimosService.updateEmprestimo(emprestimo);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) throws SQLException {
-        emprestimosService.delete(id);
+        emprestimosService.deleteEmprestimo(id);
     }
 
     @GetMapping("/listar")
     public List<Emprestimo> findAll() throws SQLException {
-        return emprestimosService.findAll();
+        return emprestimosService.getAllEmprestimos();
     }
 }

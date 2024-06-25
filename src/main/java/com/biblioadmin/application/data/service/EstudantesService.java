@@ -1,56 +1,37 @@
 package com.biblioadmin.application.data.service;
 
 import com.biblioadmin.application.data.entity.Estudante;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
+
+import com.biblioadmin.application.data.dao.EstudanteDAOInterface;
+
+import java.sql.SQLException;
 
 @Service
 public class EstudantesService {
-    private final EstudantesRepository repository;
 
-    public EstudantesService(EstudantesRepository repository) {
-        this.repository = repository;
-    }
+    //@Autowired
+    private EstudanteDAOInterface estudanteDAO;
 
-    public Optional<Estudante> get(Long id) {
-        return repository.findById(id);
+    public void createEstudante(Estudante estudante) throws SQLException {
+        estudanteDAO.create(estudante);
     }
 
-    public Estudante update(Estudante entity) {
-        return repository.save(entity);
+    public Estudante getEstudante(Long id) throws SQLException {
+        return estudanteDAO.read(id);
     }
 
-
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void updateEstudante(Estudante estudante) throws SQLException {
+        estudanteDAO.update(estudante);
     }
 
-    public Page<Estudante> list(Pageable pageable) {
-        return repository.findAll(pageable);
+    public void deleteEstudante(Long id) throws SQLException {
+        estudanteDAO.delete(id);
     }
 
-    public Page<Estudante> list(Pageable pageable, Specification<Estudante> filter) {
-        return repository.findAll(filter, pageable);
+    public List<Estudante> getAllEstudantes() throws SQLException {
+        return estudanteDAO.findAll();
     }
-    public List<Estudante> listarTodos() {
-        return repository.findAll();
-    }
-    public Estudante salvar(Estudante estudante) {
-        return repository.save(estudante);
-    }
-
-    public int count() {
-        return (int) repository.count();
-    }
-    //public Estudante salvar(Estudante equipamentos, String fileName, byte[] fileBytes) throws IOException {
-    //    equipamentos.setImagem(fileBytes);
-    //    Estudante equipamentosSalvo = repository.save(equipamentos);
-    //    return equipamentosSalvo;
-    //}
 }

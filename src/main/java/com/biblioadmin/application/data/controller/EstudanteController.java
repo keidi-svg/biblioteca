@@ -18,28 +18,28 @@ public class EstudanteController {
 
     @PostMapping
     public void create(@RequestBody Estudante estudante) throws SQLException {
-        estudanteService.create(estudante);
+        estudanteService.createEstudante(estudante);
     }
 
     @GetMapping("/{id}")
     public Estudante read(@PathVariable Long id) throws SQLException {
-        return estudanteService.read(id);
+        return estudanteService.getEstudante(id);
     }
 
     @PutMapping("/{id}")
     public void update(@PathVariable Long id, @RequestBody Estudante estudante) throws SQLException {
         estudante.setId(id);
-        estudanteService.update(estudante);
+        estudanteService.updateEstudante(estudante);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) throws SQLException {
-        estudanteService.delete(id);
+        estudanteService.deleteEstudante(id);
     }
 
     @GetMapping("/listar")
     public List<Estudante> findAll() throws SQLException {
-        return estudanteService.findAll();
+        return estudanteService.getAllEstudantes();
     }
 }
 

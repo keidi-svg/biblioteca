@@ -19,27 +19,27 @@ public class LivroController {
 
     @PostMapping
     public void create(@RequestBody Livro livro) throws SQLException {
-        livrosService.create(livro);
+        livrosService.createLivro(livro);
     }
 
     @GetMapping("/{id}")
     public Livro read(@PathVariable Long id) throws SQLException {
-        return livrosService.read(id);
+        return livrosService.getLivro(id);
     }
 
     @PutMapping("/{id}")
     public void update(@PathVariable Long id, @RequestBody Livro livro) throws SQLException {
         livro.setId(id);
-        livrosService.update(livro);
+        livrosService.updateLivro(livro);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) throws SQLException {
-        livrosService.delete(id);
+        livrosService.deleteLivro(id);
     }
 
     @GetMapping("/listar")
     public List<Livro> findAll() throws SQLException {
-        return livrosService.findAll();
+        return livrosService.getAllLivros();
     }
 }

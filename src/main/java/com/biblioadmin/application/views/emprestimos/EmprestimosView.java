@@ -30,6 +30,7 @@ import com.vaadin.flow.router.RouteAlias;
 
 import javax.annotation.security.PermitAll;
 import java.io.*;
+import java.sql.SQLException;
 import java.util.function.Consumer;
 
 @PageTitle("Emprestimos")
@@ -39,10 +40,10 @@ import java.util.function.Consumer;
 @Uses(Icon.class)
 public class EmprestimosView extends VerticalLayout {
 
-    public EmprestimosView(EmprestimosService service, EstudantesService estudantesService, LivrosService livrosService) {
+    public EmprestimosView(EmprestimosService service, EstudantesService estudantesService, LivrosService livrosService) throws SQLException {
         Grid<Emprestimo> grid = new Grid<>();
 
-        final GridListDataView<Emprestimo> gridListDataView = grid.setItems(service.listarTodos());
+        final GridListDataView<Emprestimo> gridListDataView = grid.setItems(service.getAllEmprestimos());
         grid.addColumn(Emprestimo::getId).setHeader("ID").setWidth("60px");
         grid.addColumn(c -> c.getEstudante().getNome()).setHeader("Estudante").setWidth("20%");
         grid.addColumn(c -> c.getLivro().getTitulo()).setHeader("Livro").setWidth("20%");
@@ -78,7 +79,11 @@ public class EmprestimosView extends VerticalLayout {
                             ButtonVariant.LUMO_ERROR,
                             ButtonVariant.LUMO_TERTIARY);
                     button.addClickListener(e -> {
-                        service.delete(emprestimo.getId());
+                        try {
+                            service.deleteEmprestimo(emprestimo.getId());
+                        } catch (SQLException ex) {
+                            throw new RuntimeException(ex);
+                        }
                         UI.getCurrent().getPage().reload();
                     });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -98,20 +103,20 @@ public class EmprestimosView extends VerticalLayout {
         @Serial
         private static final long serialVersionUID = 6055099001923416653L;
 
-        public EmprestimosFormDialog(final Emprestimo emprestimo, final EmprestimosService emprestimosService, final LivrosService livrosService, final EstudantesService estudantesService, final Consumer<Emprestimo> consumer) {
+        public EmprestimosFormDialog(final Emprestimo emprestimo, final EmprestimosService emprestimosService, final LivrosService livrosService, final EstudantesService estudantesService, final Consumer<Emprestimo> consumer) throws SQLException {
             FormLayout formLayout = new FormLayout();
 
             Binder<Emprestimo> binder = new Binder<>(Emprestimo.class);
 
             final ComboBox<Estudante> cbEstudante = new ComboBox<>("Estudante");
-            cbEstudante.setItems(estudantesService.listarTodos());
+            cbEstudante.setItems(estudantesService.getAllEstudantes());
             cbEstudante.setItemLabelGenerator(Estudante::getNome);
 
             binder.forField(cbEstudante).asRequired()
                     .bind(Emprestimo::getEstudante, Emprestimo::setEstudante);
 
             final ComboBox<Livro> cbLivro = new ComboBox<>("Livro");
-            cbLivro.setItems(livrosService.listarTodos());
+            cbLivro.setItems(livrosService.getAllLivros());
             cbLivro.setItemLabelGenerator(Livro::getTitulo);
 
             binder.forField(cbLivro).asRequired()
@@ -153,7 +158,7 @@ public class EmprestimosView extends VerticalLayout {
             Button btnSave = new Button("Salvar", event -> {
                 if (binder.writeBeanIfValid(emprestimo)) {
                     consumer.accept(emprestimo);
-                    emprestimosService.salvar(emprestimo);
+                    emprestimosService.updateEmprestimo(emprestimo);
                     close();
                 } else {
                     Notification.show("Preencha todos os campos corretamente.");

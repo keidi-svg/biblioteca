@@ -26,6 +26,7 @@ import com.vaadin.flow.router.RouteAlias;
 
 import javax.annotation.security.PermitAll;
 import java.io.Serial;
+import java.sql.SQLException;
 import java.util.function.Consumer;
 
 @PageTitle("Comentarios")
@@ -34,10 +35,10 @@ import java.util.function.Consumer;
 @PermitAll
 @Uses(Icon.class)
 public class LivrosView extends VerticalLayout {
-        public LivrosView(LivrosService service) {
+        public LivrosView(LivrosService service) throws SQLException {
 
             Grid<Livro> grid = new Grid<>();
-            final GridListDataView<Livro> gridListDataView = grid.setItems(service.listarTodos());
+            final GridListDataView<Livro> gridListDataView = grid.setItems(service.getAllLivros());
             grid.addColumn(Livro::getId).setHeader("ID").setResizable(true).setWidth("40px");
             grid.addColumn(Livro::getTitulo).setHeader("Título").setResizable(true).setWidth("70px");
             grid.addColumn(Livro::getAutor).setHeader("Autor").setResizable(true).setWidth("70px");
@@ -61,7 +62,11 @@ public class LivrosView extends VerticalLayout {
                                 ButtonVariant.LUMO_ERROR,
                                 ButtonVariant.LUMO_TERTIARY);
                         button.addClickListener(e -> {
-                            service.delete(livro.getId());
+                            try {
+                                service.deleteLivro(livro.getId());
+                            } catch (SQLException ex) {
+                                throw new RuntimeException(ex);
+                            }
                             UI.getCurrent().getPage().reload();
                         });
                         button.setIcon(new Icon(VaadinIcon.TRASH));

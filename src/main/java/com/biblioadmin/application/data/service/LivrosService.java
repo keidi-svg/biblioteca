@@ -9,42 +9,37 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
 
+import com.biblioadmin.application.data.dao.LivroDAOInterface;
+import com.biblioadmin.application.data.entity.Livro;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.sql.SQLException;
+import java.util.List;
+
 @Service
 public class LivrosService {
-    private final LivrosRepository repository;
 
-    public LivrosService(LivrosRepository repository) {
-        this.repository = repository;
+    @Autowired
+    private LivroDAOInterface livroDAO;
+
+    public void createLivro(Livro livro) throws SQLException {
+        livroDAO.create(livro);
     }
 
-    public Optional<Livro> get(Long id) {
-        return repository.findById(id);
+    public Livro getLivro(Long id) throws SQLException {
+        return livroDAO.read(id);
     }
 
-    public Livro update(Livro entity) {
-        return repository.save(entity);
+    public void updateLivro(Livro livro) throws SQLException {
+        livroDAO.update(livro);
     }
 
-    public void delete(Long id) {
-        repository.deleteById(id);
+    public void deleteLivro(Long id) throws SQLException {
+        livroDAO.delete(id);
     }
 
-    public Page<Livro> list(Pageable pageable) {
-        return repository.findAll(pageable);
-    }
-
-    public Page<Livro> list(Pageable pageable, Specification<Livro> filter) {
-        return repository.findAll(filter, pageable);
-    }
-    public List<Livro> listarTodos() {
-        return repository.findAll();
-    }
-
-    public void salvar(Livro cliente) {
-        repository.save(cliente);
-    }
-
-    public int count() {
-        return (int) repository.count();
+    public List<Livro> getAllLivros() throws SQLException {
+        return livroDAO.findAll();
     }
 }
