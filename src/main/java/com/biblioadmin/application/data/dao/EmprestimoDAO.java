@@ -1,77 +1,95 @@
 package com.biblioadmin.application.data.dao;
 
 import com.biblioadmin.application.data.entity.Emprestimo;
-import com.biblioadmin.application.data.entity.Estudante;
 import com.biblioadmin.application.data.entity.Livro;
+import com.biblioadmin.application.data.entity.Estudante;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
 public class EmprestimoDAO extends DAO {
 
-    public EmprestimoDAO(final Connection connection) {
+    public EmprestimoDAO(Connection connection) {
         super(connection);
     }
 
+    public void create(Emprestimo emprestimo) throws SQLException {
+        String sql = "INSERT INTO emprestimo (data_emprestimo, data_entrega, devolucao, livro_id, estudante_id) VALUES (?, ?, ?, ?, ?)";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setDate(1, Date.valueOf(emprestimo.getDataEmprestimo()));
+            stmt.setDate(2, Date.valueOf(emprestimo.getDataEntrega()));
+            stmt.setBoolean(3, emprestimo.getDevolucao());
+            stmt.setLong(4, emprestimo.getLivro().getId());
+            stmt.setLong(5, emprestimo.getEstudante().getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public Emprestimo read(Long id) throws SQLException {
+        String sql = "SELECT * FROM emprestimo WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                Emprestimo emprestimo = new Emprestimo();
+                emprestimo.setId(rs.getLong("id"));
+                emprestimo.setDataEmprestimo(rs.getDate("data_emprestimo").toLocalDate());
+                emprestimo.setDataEntrega(rs.getDate("data_entrega").toLocalDate());
+                emprestimo.setDevolucao(rs.getBoolean("devolucao"));
+                Livro livro = new Livro();
+                livro.setId(rs.getLong("livro_id"));
+                emprestimo.setLivro(livro);
+                Estudante estudante = new Estudante();
+                estudante.setId(rs.getLong("estudante_id"));
+                emprestimo.setEstudante(estudante);
+                return emprestimo;
+            }
+        }
+        return null;
+    }
+
+    public void update(Emprestimo emprestimo) throws SQLException {
+        String sql = "UPDATE emprestimo SET data_emprestimo = ?, data_entrega = ?, devolucao = ?, livro_id = ?, estudante_id = ? WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setDate(1, Date.valueOf(emprestimo.getDataEmprestimo()));
+            stmt.setDate(2, Date.valueOf(emprestimo.getDataEntrega()));
+            stmt.setBoolean(3, emprestimo.getDevolucao());
+            stmt.setLong(4, emprestimo.getLivro().getId());
+            stmt.setLong(5, emprestimo.getEstudante().getId());
+            stmt.setLong(6, emprestimo.getId());
+            stmt.executeUpdate();
+        }
+    }
+
+    public void delete(Long id) throws SQLException {
+        String sql = "DELETE FROM emprestimo WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setLong(1, id);
+            stmt.executeUpdate();
+        }
+    }
+
     public List<Emprestimo> findAll() throws SQLException {
-
-        try (PreparedStatement psmt = getConnection().prepareStatement("SELECT pedido_tb.*, pessoa_tb.*, pedido_item_tb.*,produto_tb.*"
-                + " FROM pedido_tb INNER JOIN pessoa_tb ON pedido_tb.ID_Pessoa = pessoa_tb.ID_Pessoa\r\n"
-                + "INNER JOIN pedido_item_tb ON pedido_item_tb.ID_Pedido_Item = pedido_tb.ID_Pedido INNER JOIN produto_tb ON  pedido_item_tb.ID_Produto = produto_tb.ID_Produto;")) {
-            try (ResultSet rs = psmt.executeQuery()) {
-                final List<Emprestimo> pedidos = buildPedido(rs);
-                return pedidos;
+        String sql = "SELECT * FROM emprestimo";
+        List<Emprestimo> emprestimos = new ArrayList<>();
+        try (Statement stmt = getConnection().createStatement();
+             ResultSet rs = stmt.executeQuery(sql)) {
+            while (rs.next()) {
+                Emprestimo emprestimo = new Emprestimo();
+                emprestimo.setId(rs.getLong("id"));
+                emprestimo.setDataEmprestimo(rs.getDate("data_emprestimo").toLocalDate());
+                emprestimo.setDataEntrega(rs.getDate("data_entrega").toLocalDate());
+                emprestimo.setDevolucao(rs.getBoolean("devolucao"));
+                Livro livro = new Livro();
+                livro.setId(rs.getLong("livro_id"));
+                emprestimo.setLivro(livro);
+                Estudante estudante = new Estudante();
+                estudante.setId(rs.getLong("estudante_id"));
+                emprestimo.setEstudante(estudante);
+                emprestimos.add(emprestimo);
             }
-        }
-    }
-
-    public List<Emprestimo> findPedidosOrderByValor() throws SQLException {
-
-        try (PreparedStatement psmt = getConnection().prepareStatement("SELECT pedido_tb.*, pessoa_tb.*, pedido_item_tb.*,produto_tb.* FROM pedido_tb INNER JOIN pessoa_tb ON pedido_tb.ID_Pessoa  = pessoa_tb.ID_Pessoa \r\n"
-                + "INNER JOIN pedido_item_tb ON pedido_item_tb.ID_Pedido_Item = pedido_tb.ID_Pedido INNER JOIN produto_tb ON  pedido_item_tb.ID_Produto = produto_tb.ID_Produto order by valor_total;")) {
-            try (ResultSet rs = psmt.executeQuery()) {
-                final List<Emprestimo> pedidos = buildPedido(rs);
-                return pedidos;
-            }
-        }
-    }
-
-    public List<Emprestimo> findPedidosbyClienteId(Long ClienteId) throws SQLException {
-        try (PreparedStatement psmt = getConnection().prepareStatement("SELECT pedido.*, pessoa.*, pedido_item.*,produto.* FROM pedido_tb INNER JOIN pessoa_tb ON pedido_tb.ID_Pessoa = pessoa_tb.ID_Pessoa \r\n"
-                + "INNER JOIN pedido_item_tb ON pedido_tb.ID_Pedido_Item = pedido_tb.ID_Pedido  INNER JOIN produto_tb ON  pedido_item_tb.ID_Produto = produto_tb.ID_Produto WHERE ID_Pessoa = ?;")) {
-            psmt.setLong(1, ClienteId);
-            try (ResultSet rs = psmt.executeQuery()) {
-                final List<Emprestimo> pedidos = buildPedido(rs);
-                return pedidos;
-            }
-
-        }
-    }
-
-    private List<Emprestimo> buildPedido(ResultSet rs) throws SQLException {
-        final List<Emprestimo> emprestimos = new ArrayList<>();
-
-        while (rs.next()) {
-            final Estudante produto = new Estudante()
-                    .setRegistro(rs.getInt("ID_Produto"))
-                    .setDescricao(rs.getString("descricao"))
-                    .setValorUnitario(rs.getBigDecimal("valor_unitario"));
-
-            final Livro livro = new Livro()
-                    //.setId(rs.getLong("ID_Pedido_Item"))
-                    .setAno(rs.getInt("ano"))
-                    .setValorTotal(rs.getBigDecimal("valor_total"))
-                    .setProduto(produto);
-
-
-            emprestimos.add(pedidoItem);
-
         }
         return emprestimos;
     }
-
 }
