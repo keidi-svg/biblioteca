@@ -9,6 +9,7 @@ public interface EmprestimoDAOInterface {
     void create(Emprestimo emprestimo) throws SQLException;
     Emprestimo read(Long id) throws SQLException;
     void update(Emprestimo emprestimo) throws SQLException;
+    void updateDevolucao(Long id, boolean devolucao) throws SQLException;
     void delete(Long id) throws SQLException;
     List<Emprestimo> findAll() throws SQLException;
 }

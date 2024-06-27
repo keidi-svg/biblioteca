@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/emprestimos")
+@RequestMapping("/emprestimo")
 public class EmprestimoController {
 
     @Autowired

@@ -7,20 +7,16 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 import com.biblioadmin.application.data.dao.LivroDAOInterface;
-import com.biblioadmin.application.data.entity.Livro;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.List;
 
 @Service
 public class LivrosService {
 
-    @Autowired
+    //@Autowired
     private LivroDAOInterface livroDAO;
 
     public void createLivro(Livro livro) throws SQLException {

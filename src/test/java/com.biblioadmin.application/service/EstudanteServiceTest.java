@@ -4,7 +4,7 @@ import java.util.List;
 import java.util.Random;
 
 import com.biblioadmin.application.data.entity.Estudante;
-import com.biblioadmin.application.data.service.EstudantesService;
+import com.biblioadmin.application.views.estudantes.EstudanteService;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -21,7 +21,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class EstudanteServiceTest {
     @Autowired
-    private EstudantesService estudanteService;
+    private EstudanteService estudanteService;
 
     Random random = new Random();
 

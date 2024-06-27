@@ -1,26 +1,10 @@
 package com.biblioadmin.application.data.service;
 
-import com.biblioadmin.application.data.dao.EmprestimoDAO;
 import com.biblioadmin.application.data.entity.Emprestimo;
-import com.biblioadmin.application.data.entity.Livro;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
-
-import javax.sql.DataSource;
-import java.sql.Connection;
 import java.util.List;
-import java.util.Optional;
-
 import com.biblioadmin.application.data.dao.EmprestimoDAOInterface;
-import com.biblioadmin.application.data.entity.Emprestimo;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import java.sql.SQLException;
-import java.util.List;
 
 @Service
 public class EmprestimosService {
@@ -41,6 +25,10 @@ public class EmprestimosService {
             emprestimoDAO.update(emprestimo);
         else
             emprestimoDAO.create(emprestimo);
+    }
+
+    public void updateDevolucao(Long id, boolean devolucao) throws SQLException {
+        emprestimoDAO.updateDevolucao(id, devolucao);
     }
 
     public void deleteEmprestimo(Long id) throws SQLException {

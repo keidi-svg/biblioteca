@@ -37,10 +37,10 @@ import java.util.function.Consumer;
 @RolesAllowed("BIBLIOTECARIA")
 @Uses(Icon.class)
 public class EstudanteView extends VerticalLayout {
-    public EstudanteView(EstudantesService service) throws SQLException {
+    public EstudanteView(EstudanteService service) throws SQLException {
         Grid<Estudante> grid = new Grid<>();
 
-        final GridListDataView<Estudante> gridListDataView = grid.setItems(service.getAllEstudantes());
+        final GridListDataView<Estudante> gridListDataView = grid.setItems(service.listarTodos());
         grid.addColumn(Estudante::getId).setHeader("ID").setWidth("60px");
         grid.addColumn(Estudante::getNome).setHeader("Nome").setWidth("20%");
         grid.addColumn(Estudante::getMatricula).setHeader("Matrícula").setWidth("40%");
@@ -60,16 +60,12 @@ public class EstudanteView extends VerticalLayout {
         }).setHeader("Editar").setWidth("85px").setResizable(true);
 
         grid.addColumn(
-                new ComponentRenderer<>(Button::new, (button, comentario) -> {
+                new ComponentRenderer<>(Button::new, (button, estudante) -> {
                     button.addThemeVariants(ButtonVariant.LUMO_ICON,
                             ButtonVariant.LUMO_ERROR,
                             ButtonVariant.LUMO_TERTIARY);
                     button.addClickListener(e -> {
-                        try {
-                            service.deleteEstudante(comentario.getId());
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        service.delete(estudante.getId());
                         UI.getCurrent().getPage().reload();
                     });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -90,7 +86,7 @@ public class EstudanteView extends VerticalLayout {
         @Serial
         private static final long serialVersionUID = 6055099001923416653L;
 
-        public EquipamentosFormDialog(final Estudante estudante, final EstudantesService estudanteService, final Consumer<Estudante> consumer) {
+        public EquipamentosFormDialog(final Estudante estudante, final EstudanteService estudanteService, final Consumer<Estudante> consumer) {
             FormLayout formLayout = new FormLayout();
 
             Binder<Estudante> binder = new Binder<>(Estudante.class);
@@ -135,7 +131,8 @@ public class EstudanteView extends VerticalLayout {
             Button btnSalvar = new Button("Salvar", evento -> {
                 if (binder.writeBeanIfValid(estudante)) {
                     consumer.accept(estudante);
-                    estudanteService.updateEstudante(estudante);
+                    estudanteService.salvar(estudante);
+
                     close();
                 } else {
                     Notification.show("Preencha todos os campos corretamente.");

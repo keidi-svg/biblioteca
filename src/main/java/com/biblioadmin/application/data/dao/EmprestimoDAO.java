@@ -62,6 +62,15 @@ public class EmprestimoDAO extends DAO implements EmprestimoDAOInterface {
         }
     }
 
+    public void updateDevolucao(Long IDemprestimo, boolean devolucao) throws SQLException {
+        String sql = "UPDATE emprestimo SET devolucao = ? WHERE id = ?";
+        try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {
+            stmt.setBoolean(1, devolucao);
+            stmt.setLong(2, IDemprestimo);
+            stmt.executeUpdate();
+        }
+    }
+
     public void delete(Long id) throws SQLException {
         String sql = "DELETE FROM emprestimo WHERE id = ?";
         try (PreparedStatement stmt = getConnection().prepareStatement(sql)) {

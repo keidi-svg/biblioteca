@@ -11,7 +11,7 @@ import java.sql.SQLException;
 import java.util.List;
 
 @RestController
-@RequestMapping("/livros")
+@RequestMapping("/livro")
 public class LivroController {
 
     @Autowired

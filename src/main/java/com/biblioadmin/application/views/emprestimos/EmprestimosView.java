@@ -7,6 +7,8 @@ import com.biblioadmin.application.data.service.EmprestimosService;
 import com.biblioadmin.application.data.service.EstudantesService;
 import com.biblioadmin.application.data.service.LivrosService;
 import com.biblioadmin.application.views.MainLayout;
+import com.biblioadmin.application.views.estudantes.EstudanteService;
+import com.biblioadmin.application.views.livros.LivroService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
@@ -40,23 +42,24 @@ import java.util.function.Consumer;
 @Uses(Icon.class)
 public class EmprestimosView extends VerticalLayout {
 
-    public EmprestimosView(EmprestimosService service, EstudantesService estudantesService, LivrosService livrosService) throws SQLException {
+    public EmprestimosView(EmprestimoService service, EstudanteService estudantesService, LivroService livrosService) throws SQLException {
         Grid<Emprestimo> grid = new Grid<>();
 
-        final GridListDataView<Emprestimo> gridListDataView = grid.setItems(service.getAllEmprestimos());
+        final GridListDataView<Emprestimo> gridListDataView = grid.setItems(service.listarTodos());
         grid.addColumn(Emprestimo::getId).setHeader("ID").setWidth("60px");
         grid.addColumn(c -> c.getEstudante().getNome()).setHeader("Estudante").setWidth("20%");
         grid.addColumn(c -> c.getLivro().getTitulo()).setHeader("Livro").setWidth("20%");
         grid.addColumn(Emprestimo::getDataEmprestimo).setHeader("Data Empréstimo").setWidth("20%");
         grid.addColumn(Emprestimo::getDataEntrega).setHeader("Data Entrega").setWidth("20%");
-        grid.addColumn(emprestimo -> emprestimo.getDevolucao() ? "Sim" : "Não").setHeader("Devolução").setComparator(Emprestimo::getDevolucao).setWidth("10%");
 
         grid.addColumn(
-                new ComponentRenderer<>(Checkbox::new, (checkbox, emprestimo) -> {
-                    checkbox.setValue(emprestimo.getDevolucao());
-                    checkbox.addValueChangeListener(event -> {
-                        boolean devolvido = event.getValue();
-                        service.updateDevolucao(emprestimo.getId(), devolvido);
+                new ComponentRenderer<>(ComboBox::new, (comboBox, emprestimo) -> {
+                    comboBox.setItems("Sim", "Não");
+                    comboBox.setValue(emprestimo.getDevolucao() ? "Sim" : "Não");
+                    comboBox.addValueChangeListener(event -> {
+                        boolean devolvido = "Sim".equals(event.getValue());
+                        emprestimo.setDevolucao(devolvido); // Atualizar o objeto Emprestimo
+                        service.updateDevolucao(emprestimo.getId(), devolvido); // Chamar o método salvar
                         Notification.show("Status de devolução atualizado");
                         gridListDataView.refreshItem(emprestimo);
                     });
@@ -65,10 +68,14 @@ public class EmprestimosView extends VerticalLayout {
         grid.addComponentColumn(item -> {
             Button editButton = new Button("Editar");
             editButton.addClickListener(event -> {
-                new EmprestimosFormDialog(item, service, livrosService, estudantesService, c -> {
-                    gridListDataView.addItem(c);
-                    gridListDataView.refreshAll();
-                });
+                try {
+                    new EmprestimosFormDialog(item, service, livrosService, estudantesService, c -> {
+                        gridListDataView.addItem(c);
+                        gridListDataView.refreshAll();
+                    });
+                } catch (SQLException e) {
+                    throw new RuntimeException(e);
+                }
             });
             return editButton;
         }).setHeader("Editar").setWidth("85px").setResizable(true);
@@ -79,11 +86,7 @@ public class EmprestimosView extends VerticalLayout {
                             ButtonVariant.LUMO_ERROR,
                             ButtonVariant.LUMO_TERTIARY);
                     button.addClickListener(e -> {
-                        try {
-                            service.deleteEmprestimo(emprestimo.getId());
-                        } catch (SQLException ex) {
-                            throw new RuntimeException(ex);
-                        }
+                        service.delete(emprestimo.getId());
                         UI.getCurrent().getPage().reload();
                     });
                     button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -91,10 +94,14 @@ public class EmprestimosView extends VerticalLayout {
 
         Button btnAdicionar = new Button("Adicionar");
         btnAdicionar.addClickListener(event -> {
-            new EmprestimosFormDialog(new Emprestimo(), service, livrosService, estudantesService, c -> {
-                gridListDataView.addItem(c);
-                gridListDataView.refreshAll();
-            });
+            try {
+                new EmprestimosFormDialog(new Emprestimo(), service, livrosService, estudantesService, c -> {
+                    gridListDataView.addItem(c);
+                    gridListDataView.refreshAll();
+                });
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         });
         add(btnAdicionar, grid);
     }
@@ -103,37 +110,24 @@ public class EmprestimosView extends VerticalLayout {
         @Serial
         private static final long serialVersionUID = 6055099001923416653L;
 
-        public EmprestimosFormDialog(final Emprestimo emprestimo, final EmprestimosService emprestimosService, final LivrosService livrosService, final EstudantesService estudantesService, final Consumer<Emprestimo> consumer) throws SQLException {
+        public EmprestimosFormDialog(final Emprestimo emprestimo, final EmprestimoService emprestimosService, final LivroService livrosService, final EstudanteService estudantesService, final Consumer<Emprestimo> consumer) throws SQLException {
             FormLayout formLayout = new FormLayout();
 
             Binder<Emprestimo> binder = new Binder<>(Emprestimo.class);
 
             final ComboBox<Estudante> cbEstudante = new ComboBox<>("Estudante");
-            cbEstudante.setItems(estudantesService.getAllEstudantes());
+            cbEstudante.setItems(estudantesService.listarTodos());
             cbEstudante.setItemLabelGenerator(Estudante::getNome);
 
             binder.forField(cbEstudante).asRequired()
                     .bind(Emprestimo::getEstudante, Emprestimo::setEstudante);
 
             final ComboBox<Livro> cbLivro = new ComboBox<>("Livro");
-            cbLivro.setItems(livrosService.getAllLivros());
+            cbLivro.setItems(livrosService.listarTodos());
             cbLivro.setItemLabelGenerator(Livro::getTitulo);
 
             binder.forField(cbLivro).asRequired()
                     .bind(Emprestimo::getLivro, Emprestimo::setLivro);
-
-            //final DatePicker datePicker = new DatePicker("Data Empréstimo");
-            //add(datePicker);
-//
-            //binder.forField(datePicker).asRequired()
-            //        .bind(Emprestimo::getDataEmprestimo, Emprestimo::setDataEmprestimo);
-//
-            //final DatePicker datePickerEntrega = new DatePicker("Data Entrega");
-            //add(datePickerEntrega);
-//
-            //binder.forField(datePickerEntrega).asRequired()
-            //        .bind(Emprestimo::getDataEntrega, Emprestimo::setDataEntrega);
-
 
             DatePicker dataEmprestimo = new DatePicker("Data Emprestimo");
             add(dataEmprestimo);
@@ -158,7 +152,10 @@ public class EmprestimosView extends VerticalLayout {
             Button btnSave = new Button("Salvar", event -> {
                 if (binder.writeBeanIfValid(emprestimo)) {
                     consumer.accept(emprestimo);
-                    emprestimosService.updateEmprestimo(emprestimo);
+                    if(emprestimo.getId() == null || emprestimo.getId() == 1){
+                        emprestimo.setDevolucao(false);
+                    }
+                    emprestimosService.salvar(emprestimo);
                     close();
                 } else {
                     Notification.show("Preencha todos os campos corretamente.");

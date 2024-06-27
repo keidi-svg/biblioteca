@@ -29,16 +29,16 @@ import java.io.Serial;
 import java.sql.SQLException;
 import java.util.function.Consumer;
 
-@PageTitle("Comentarios")
-@Route(value = "comentarios", layout = MainLayout.class)
+@PageTitle("Livros")
+@Route(value = "livros", layout = MainLayout.class)
 @RouteAlias(value = "", layout = MainLayout.class)
 @PermitAll
 @Uses(Icon.class)
 public class LivrosView extends VerticalLayout {
-        public LivrosView(LivrosService service) throws SQLException {
+        public LivrosView(LivroService service) throws SQLException {
 
             Grid<Livro> grid = new Grid<>();
-            final GridListDataView<Livro> gridListDataView = grid.setItems(service.getAllLivros());
+            final GridListDataView<Livro> gridListDataView = grid.setItems(service.listarTodos());
             grid.addColumn(Livro::getId).setHeader("ID").setResizable(true).setWidth("40px");
             grid.addColumn(Livro::getTitulo).setHeader("Título").setResizable(true).setWidth("70px");
             grid.addColumn(Livro::getAutor).setHeader("Autor").setResizable(true).setWidth("70px");
@@ -62,11 +62,7 @@ public class LivrosView extends VerticalLayout {
                                 ButtonVariant.LUMO_ERROR,
                                 ButtonVariant.LUMO_TERTIARY);
                         button.addClickListener(e -> {
-                            try {
-                                service.deleteLivro(livro.getId());
-                            } catch (SQLException ex) {
-                                throw new RuntimeException(ex);
-                            }
+                            service.delete(livro.getId());
                             UI.getCurrent().getPage().reload();
                         });
                         button.setIcon(new Icon(VaadinIcon.TRASH));
@@ -87,7 +83,7 @@ public class LivrosView extends VerticalLayout {
             @Serial
             private static final long serialVersionUID = 6055099001923416653L;
 
-            public LivrosFormDialog(final Livro livro, final LivrosService livrosService, final Consumer<Livro> consumer) {
+            public LivrosFormDialog(final Livro livro, final LivroService livrosService, final Consumer<Livro> consumer) {
                 FormLayout formLayout = new FormLayout();
 
                 Binder<Livro> binder = new Binder<>(Livro.class);
