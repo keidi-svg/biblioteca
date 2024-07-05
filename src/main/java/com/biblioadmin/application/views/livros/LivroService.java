@@ -1,7 +1,7 @@
 package com.biblioadmin.application.views.livros;
 
 import com.biblioadmin.application.data.entity.Livro;
-import com.biblioadmin.application.data.service.LivrosRepository;
+import com.biblioadmin.application.data.repository.LivroRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -12,9 +12,9 @@ import java.util.Optional;
 
 @Service
 public class LivroService {
-    private final LivrosRepository repository;
+    private final LivroRepository repository;
 
-    public LivroService(LivrosRepository repository) {
+    public LivroService(LivroRepository repository) {
         this.repository = repository;
     }
 

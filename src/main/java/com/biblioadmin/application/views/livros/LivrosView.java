@@ -1,7 +1,6 @@
 package com.biblioadmin.application.views.livros;
 
 import com.biblioadmin.application.data.entity.Livro;
-import com.biblioadmin.application.data.service.LivrosService;
 import com.biblioadmin.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

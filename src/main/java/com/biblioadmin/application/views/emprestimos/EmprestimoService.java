@@ -1,8 +1,7 @@
 package com.biblioadmin.application.views.emprestimos;
 
 import com.biblioadmin.application.data.entity.Emprestimo;
-import com.biblioadmin.application.data.entity.Livro;
-import com.biblioadmin.application.data.service.EmprestimosRepository;
+import com.biblioadmin.application.data.repository.EmprestimoRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -13,9 +12,9 @@ import java.util.Optional;
 
 @Service
 public class EmprestimoService {
-    private final EmprestimosRepository repository;
+    private final EmprestimoRepository repository;
 
-    public EmprestimoService(EmprestimosRepository repository) {
+    public EmprestimoService(EmprestimoRepository repository) {
         this.repository = repository;
     }
 

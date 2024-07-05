@@ -1,8 +1,7 @@
 package com.biblioadmin.application.views.estudantes;
 
-import com.biblioadmin.application.data.Role;
 import com.biblioadmin.application.data.entity.Estudante;
-import com.biblioadmin.application.data.service.EstudantesService;
+import com.biblioadmin.application.data.repository.EstudanteRepository;
 import com.biblioadmin.application.views.MainLayout;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;

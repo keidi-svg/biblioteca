@@ -3,16 +3,12 @@ package com.biblioadmin.application.views.emprestimos;
 import com.biblioadmin.application.data.entity.Emprestimo;
 import com.biblioadmin.application.data.entity.Estudante;
 import com.biblioadmin.application.data.entity.Livro;
-import com.biblioadmin.application.data.service.EmprestimosService;
-import com.biblioadmin.application.data.service.EstudantesService;
-import com.biblioadmin.application.data.service.LivrosService;
 import com.biblioadmin.application.views.MainLayout;
 import com.biblioadmin.application.views.estudantes.EstudanteService;
 import com.biblioadmin.application.views.livros.LivroService;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
-import com.vaadin.flow.component.checkbox.Checkbox;
 import com.vaadin.flow.component.combobox.ComboBox;
 import com.vaadin.flow.component.datepicker.DatePicker;
 import com.vaadin.flow.component.dependency.Uses;
@@ -28,7 +24,6 @@ import com.vaadin.flow.data.binder.Binder;
 import com.vaadin.flow.data.renderer.ComponentRenderer;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
-import com.vaadin.flow.router.RouteAlias;
 
 import javax.annotation.security.PermitAll;
 import java.io.*;
@@ -37,7 +32,6 @@ import java.util.function.Consumer;
 
 @PageTitle("Emprestimos")
 @Route(value = "emprestimos", layout = MainLayout.class)
-//@RouteAlias(value = "none", layout = MainLayout.class)
 @PermitAll
 @Uses(Icon.class)
 public class EmprestimosView extends VerticalLayout {
